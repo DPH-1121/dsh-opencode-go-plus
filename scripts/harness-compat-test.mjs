@@ -22,9 +22,9 @@ test('launcher accepts supported trains without exemptions and refuses untested 
     const semver = createRequire(require.resolve('@deepseek-ai/dsh-app-boot'))('semver');
     const ranges = Object.entries({ ...manifest.dependencies, ...manifest.peerDependencies })
       .filter(([name]) => name === '@deepseek-ai/dsh' || name.startsWith('@deepseek-ai/dsh-'));
-    for (const version of ['0.1.6-alpha.1', '0.1.6-alpha.2', '0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.1', '0.2.0', '0.2.1']) {
+    for (const version of ['0.1.6-alpha.1', '0.1.6-alpha.2', '0.1.7-alpha.1', '0.1.7-rc.2', '0.2.0-rc.1', '0.2.0', '0.2.1-rc.2', '0.2.1']) {
       assert.equal(evaluatePluginCompatibility(manifest, {}, version), undefined, version);
-      for (const [name, range] of ranges) assert.ok(semver.satisfies(version, range), `${name} rejects ${version} under npm rules`);
+      for (const [name, range] of ranges) assert.ok(semver.satisfies(version, range, { includePrerelease: true }), `${name} rejects ${version} under runtime rules`);
     }
     for (const version of ['0.1.5-rc.3', '0.2.0-alpha.1', '0.3.0-alpha.1', '0.3.0', '1.0.0']) {
       assert.equal(evaluatePluginCompatibility(manifest, {}, version)?.exempted, false, version);
@@ -43,6 +43,7 @@ test('real Harness LLM registers fallback route, discovers models and withdraws 
   const { LlmRuntime, LlmAdapter } = await import('@deepseek-ai/dsh-llm');
   const { TypertRegistry } = await import('@deepseek-ai/dsh-typert-registry');
   const { TypertGatewayService } = await import('@deepseek-ai/dsh-api-gateway');
+  const { RemoteAccessService } = await import('@deepseek-ai/dsh-api-remote-access');
   const plugin = await import('../lib/index.js');
   let key = 'local-test-key';
   class Credentials extends Service {
@@ -62,16 +63,26 @@ test('real Harness LLM registers fallback route, discovers models and withdraws 
   };
   try {
     await ctx.plugin(TypertRegistry);
+    await ctx.plugin(RemoteAccessService);
     await ctx.plugin(TypertGatewayService, {});
     await ctx.plugin(LlmRuntime);
     await ctx.plugin(Credentials);
     ctx.llm.registerAdapter(['opencode-go'], new LlmAdapter());
     await ctx.plugin(plugin, {});
-    const call = async method => {
-      const reply = await ctx.typertGateway.invokeRpc(`opencodeGoConnection/${method}`, { args: {} }, new AbortController().signal);
-      assert.equal(reply.ok, true, JSON.stringify(reply));
-      return reply.value;
+    const peer = {
+      id: 'compat-test-peer',
+      ctx,
+      principal: { kind: 'owner' },
+      signal: new AbortController().signal,
+      interactions: 'none',
+      dispose: async () => {},
     };
+    const call = async method => ctx.typertGateway.invoke({
+      namespace: 'opencodeGoConnection',
+      method,
+      args: {},
+      peer,
+    });
     const state = await call('refresh');
     assert.equal(state.connection, 'ready');
     assert.equal(state.route, 'opencode-go-plus');

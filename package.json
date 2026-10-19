@@ -1,6 +1,6 @@
 {
   "name": "dsh-opencode-go-plus",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "OpenCode Go model provider for DeepSeek Harness with live model discovery, connection status, and compatibility with the 0.1.6, 0.1.7, and 0.2 release trains.",
   "type": "module",
   "license": "MIT",
@@ -18,7 +18,8 @@
     "url": "https://github.com/HaydenSmith1121/dsh-opencode-go-plus/issues"
   },
   "engines": {
-    "node": "^22.19.0 || >=24.0.0"
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": ">=0.1.6-alpha.1 <0.1.7-0 || >=0.1.7-alpha.0 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1-0 || >=0.2.1-rc.2 <0.3.0-0"
   },
   "main": "./lib/index.js",
   "types": "./lib/types/index.d.ts",
