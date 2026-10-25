@@ -58,7 +58,7 @@ dsh-opencode-go") and restart to use this package instead.
 
 > ⚠️ **本包不能与 `dsh-opencode-go` 同时安装。** 两者共用设置命名空间与 provider 路由，
 > 且**谁先加载谁赢**：升级时请先卸载旧包，见
-> [`examples/migrate-from-fork.patch.yml`](./examples/migrate-from-fork.patch.yml)。
+> [`examples/migrate-from-fork.patch.yml`](../examples/migrate-from-fork.patch.yml)。
 >
 > 本包的退场是**安静的**：命令行上只会看到 `dsh web` 正常启动，模型列表停在旧包的内容。
 > 判断依据是**同族外 ID 在不在**（如 `grok-4.7`、`hy3-preview`）以及模型总数比不比基线多，
@@ -171,8 +171,8 @@ llm-opencode-go:
 
 两种模型下 `apply()` 都走同一份代码：先试 `installSection`（旧），再退到
 `configure`（新），两个都没有时打一条 warning 并在日志里说明。运行时的探测项清单见
-[`docs/compatibility.md`](docs/compatibility.md)，各版本的实测证据见
-[`docs/verification.md`](docs/verification.md) § 0.4.0 / 0.4.7。
+[`docs/compatibility.md`](compatibility.md)，各版本的实测证据见
+[`docs/verification.md`](verification.md) § 0.4.0 / 0.4.7。
 
 **正常情况下不需要任何"兼容性豁免"。** 0.1.7 系列启动时会校验 peer 范围，而
 `0.3.0` 的精确钉版匹配不上 `0.1.7-rc.2`，必须手工放行；`0.4.0` 把范围拆成
@@ -356,7 +356,7 @@ provider 目录行（`opencode-go-plus<-llm-opencode-go[]`）、路由注册（�
 而非兜底的 `opencode-go-plus`）、模型数（43，同样的前三个 ID）与日志行全部一致。
 `compatibility.json` 清空为 `{}` 后 `0.1.7-rc.2` 依然正常加载 —— 也就是说
 `0.3.0` 时代那个必须手写的兼容性豁免，不再需要了。细节见
-[`docs/verification.md`](docs/verification.md) § 0.4.0。
+[`docs/verification.md`](verification.md) § 0.4.0。
 
 ### 0.3.0
 
