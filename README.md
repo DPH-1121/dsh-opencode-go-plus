@@ -10,6 +10,10 @@
 
 见 [**DSH 插件安装教程**](https://github.com/DPH-1121/dsh-plugins/blob/main/docs/install.md)。
 
+## 兼容性
+
+基线 **dsh `0.2.1-rc.3`**：清单通过 rc.3 的插件闸门、可装入隔离 profile 并 `--dump-config` 组合成功；插件只依赖 `dsh-llm-pi-ai` 的 provider 注册面与网关模型目录，rc.3 未改动这两处。`engines.dsh` 同时保留 `0.1.6` 起的旧窗口。
+
 ## 其他 DSH 插件
 
 - [dsh-provider-plus](https://github.com/DPH-1121/dsh-provider-plus) —— 自定义模型提供商工作台：图片输入、网关请求头、模型拉取、连通性测试、用量查询。
